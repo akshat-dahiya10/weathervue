@@ -3,17 +3,20 @@
 import { motion } from 'framer-motion';
 import type { Weather } from '@/lib/types';
 
-export default function SidePanel({ weather }: { weather: Weather }) {
-  const rainChance =
-    weather.rain?.['1h'] || weather.rain?.['3h']
-      ? 80
-      : weather.clouds.all > 70
-      ? 60
-      : weather.humidity > 70
-      ? 50
-      : 20;
+export default function SidePanel({ weather, forecast }: any)
+const rainChance =
+  forecast?.list?.slice(0, 3).some((f: any) =>
+    f.weather[0].main.toLowerCase().includes('rain')
+  )
+    ? 85
+    : forecast?.list?.[0]?.clouds?.all > 70
+    ? 60
+    : weather.main.humidity > 70
+    ? 50
+    : 20;
 
-  const willRainSoon = rainChance > 60;
+const willRainSoon = rainChance > 60;
+
 
   return (
     <motion.div
