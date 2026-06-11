@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar } from 'lucide-react';
+import { Calendar, Droplets, Wind } from 'lucide-react';
 import type { Forecast } from '@/lib/types';
 
 interface ForecastSectionProps {
@@ -23,18 +23,21 @@ interface DailyForecast {
 }
 
 function getWeatherIconUrl(iconCode: string): string {
-  return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+  return `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
 }
 
 function groupForecastByDay(forecast: Forecast): DailyForecast[] {
-  const dailyData: Record<string, {
-    label: string;
-    dayName: string;
-    temps: number[];
-    weather: Forecast['list'][0]['weather'][0];
-    humidity: number[];
-    windSpeed: number[];
-  }> = {};
+  const dailyData: Record<
+    string,
+    {
+      label: string;
+      dayName: string;
+      temps: number[];
+      weather: Forecast['list'][0]['weather'][0];
+      humidity: number[];
+      windSpeed: number[];
+    }
+  > = {};
 
   forecast.list.forEach((item) => {
     const date = new Date(item.dt * 1000);
@@ -47,7 +50,9 @@ function groupForecastByDay(forecast: Forecast): DailyForecast[] {
           month: 'short',
           day: 'numeric',
         }),
-        dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        dayName: date.toLocaleDateString('en-US', {
+          weekday: 'short',
+        }),
         temps: [],
         weather: item.weather[0],
         humidity: [],
@@ -68,76 +73,223 @@ function groupForecastByDay(forecast: Forecast): DailyForecast[] {
       tempMin: Math.round(Math.min(...data.temps)),
       tempMax: Math.round(Math.max(...data.temps)),
       weather: data.weather,
-      humidity: Math.round(data.humidity.reduce((a, b) => a + b, 0) / data.humidity.length),
-      windSpeed: Math.round((data.windSpeed.reduce((a, b) => a + b, 0) / data.windSpeed.length) * 3.6),
+      humidity: Math.round(
+        data.humidity.reduce((a, b) => a + b, 0) /
+          data.humidity.length
+      ),
+      windSpeed: Math.round(
+        (data.windSpeed.reduce((a, b) => a + b, 0) /
+          data.windSpeed.length) *
+          3.6
+      ),
     }));
 }
 
-export default function ForecastSection({ forecast }: ForecastSectionProps) {
+export default function ForecastSection({
+  forecast,
+}: ForecastSectionProps) {
   const dailyForecasts = groupForecastByDay(forecast);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.6, duration: 0.5 }}
-      className="w-full max-w-5xl mx-auto mt-8"
+    <motion.section
+      initial={{
+        opacity: 0,
+        y: 30,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.7,
+      }}
+      className="w-full max-w-6xl mx-auto mt-12"
     >
       {/* Header */}
-      <div className="flex items-center gap-2 mb-6">
-        <Calendar className="w-5 h-5 text-blue-400" />
-        <h3 className="text-lg font-semibold text-white">5-Day Forecast</h3>
+
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <div className="flex items-center gap-3">
+            <Calendar className="w-6 h-6 text-cyan-400" />
+
+            <h3 className="text-2xl md:text-3xl font-black text-white">
+              5-Day Forecast
+            </h3>
+          </div>
+
+          <p className="text-slate-400 mt-2">
+            Extended weather outlook
+          </p>
+        </div>
       </div>
 
-      {/* Forecast Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      {/* Cards */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-5">
         {dailyForecasts.map((day, index) => (
           <motion.div
             key={day.date}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 + index * 0.1 }}
-            whileHover={{ y: -8, scale: 1.02 }}
-            className="group relative overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 p-4 cursor-default transition-all duration-300 hover:bg-white/15 hover:border-white/20 hover:shadow-xl"
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: index * 0.08,
+            }}
+            whileHover={{
+              y: -10,
+              scale: 1.03,
+            }}
+            className="
+            group
+            relative
+            overflow-hidden
+            rounded-[28px]
+            border
+            border-white/10
+            bg-white/[0.05]
+            backdrop-blur-2xl
+            p-5
+            hover:border-cyan-400/40
+            hover:shadow-[0_0_50px_rgba(59,130,246,0.25)]
+            transition-all
+            duration-500
+            "
           >
-            {/* Decorative gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/0 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            
-            <div className="relative z-10">
-              {/* Day Name */}
-              <p className="text-white font-medium text-center mb-3">
-                {index === 0 ? 'Today' : day.dayName}
-              </p>
+            {/* Glow */}
 
-              {/* Icon */}
-              <div className="flex justify-center mb-2">
+            <div
+              className="
+              absolute
+              inset-0
+              opacity-0
+              group-hover:opacity-100
+              transition-opacity
+              duration-500
+              bg-gradient-to-b
+              from-cyan-500/10
+              via-blue-500/5
+              to-transparent
+              "
+            />
+
+            <div className="relative z-10">
+              {/* Day */}
+
+              <div className="text-center mb-4">
+                <p className="font-bold text-white text-lg">
+                  {index === 0
+                    ? 'Today'
+                    : day.dayName}
+                </p>
+
+                <p className="text-xs text-slate-500 mt-1">
+                  {day.date}
+                </p>
+              </div>
+
+              {/* Weather Icon */}
+
+              <div className="flex justify-center mb-4">
                 <img
-                  src={getWeatherIconUrl(day.weather.icon)}
+                  src={getWeatherIconUrl(
+                    day.weather.icon
+                  )}
                   alt={day.weather.description}
-                  className="w-14 h-14 drop-shadow-md group-hover:scale-110 transition-transform duration-300"
+                  className="
+                  w-24
+                  h-24
+                  drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]
+                  group-hover:scale-125
+                  transition-all
+                  duration-500
+                  "
                 />
               </div>
 
-              {/* Condition */}
-              <p className="text-gray-400 text-xs text-center capitalize mb-3 truncate">
+              {/* Weather Condition */}
+
+              <p
+                className="
+                text-center
+                text-sm
+                text-slate-300
+                capitalize
+                mb-5
+                min-h-[40px]
+                "
+              >
                 {day.weather.description}
               </p>
 
               {/* Temperature */}
-              <div className="flex justify-center items-baseline gap-2 mb-3">
-                <span className="text-2xl font-bold text-white">{day.tempMax}°</span>
-                <span className="text-lg text-gray-400">{day.tempMin}°</span>
+
+              <div className="flex justify-center items-end gap-2 mb-5">
+                <span className="text-3xl font-black text-white">
+                  {day.tempMax}°
+                </span>
+
+                <span className="text-lg text-slate-400">
+                  {day.tempMin}°
+                </span>
               </div>
 
-              {/* Extra Details */}
-              <div className="flex justify-between text-xs text-gray-500 pt-3 border-t border-white/10">
-                <span>💧 {day.humidity}%</span>
-                <span>💨 {day.windSpeed}</span>
+              {/* Temperature Bar */}
+
+              <div className="mb-5">
+                <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="
+                    h-full
+                    rounded-full
+                    bg-gradient-to-r
+                    from-cyan-400
+                    via-blue-500
+                    to-violet-500
+                    "
+                    style={{
+                      width: `${Math.min(
+                        day.tempMax * 2,
+                        100
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Stats */}
+
+              <div className="space-y-3 border-t border-white/10 pt-4">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Droplets className="w-4 h-4" />
+                    Humidity
+                  </div>
+
+                  <span className="text-white font-medium">
+                    {day.humidity}%
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-slate-400">
+                    <Wind className="w-4 h-4" />
+                    Wind
+                  </div>
+
+                  <span className="text-white font-medium">
+                    {day.windSpeed} km/h
+                  </span>
+                </div>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
-    </motion.div>
+    </motion.section>
   );
 }
