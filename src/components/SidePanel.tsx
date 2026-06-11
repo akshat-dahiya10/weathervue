@@ -1,22 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { Weather } from '@/lib/types';
 
-export default function SidePanel({ weather, forecast }: any)
-const rainChance =
-  forecast?.list?.slice(0, 3).some((f: any) =>
-    f.weather[0].main.toLowerCase().includes('rain')
-  )
-    ? 85
-    : forecast?.list?.[0]?.clouds?.all > 70
-    ? 60
-    : weather.main.humidity > 70
-    ? 50
-    : 20;
+export default function SidePanel({ weather, forecast }: any) {
+  // ✅ AI Rain Prediction Logic
+  const rainChance =
+    forecast?.list?.slice(0, 3).some((f: any) =>
+      f.weather[0].main.toLowerCase().includes('rain')
+    )
+      ? 85
+      : forecast?.list?.[0]?.clouds?.all > 70
+      ? 60
+      : weather.main.humidity > 70
+      ? 50
+      : 20;
 
-const willRainSoon = rainChance > 60;
-
+  const willRainSoon = rainChance > 60;
 
   return (
     <motion.div
@@ -76,6 +75,7 @@ const willRainSoon = rainChance > 60;
             : '☀️ Weather looks stable. No rain expected soon.'}
         </p>
 
+        {/* Progress Bar */}
         <div className="mt-3">
           <div className="h-2 bg-white/10 rounded-full overflow-hidden">
             <div
@@ -83,6 +83,7 @@ const willRainSoon = rainChance > 60;
               style={{ width: `${rainChance}%` }}
             />
           </div>
+
           <p className="text-xs text-gray-400 mt-1">
             Rain Probability: {rainChance}%
           </p>
