@@ -1,61 +1,61 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Droplets, Wind, Gauge, Thermometer } from 'lucide-react';
 import type { Weather } from '@/lib/types';
 
 export default function WeatherCard({ weather }: { weather: Weather }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-xl text-white"
+      className="relative max-w-4xl mx-auto p-[1px] rounded-3xl bg-gradient-to-r from-white/20 to-white/5"
     >
-      {/* City */}
-      <h2 className="text-3xl font-bold">
-        {weather.name}, {weather.sys.country}
-      </h2>
+      <div className="bg-black/30 backdrop-blur-2xl rounded-3xl p-8 text-white shadow-2xl">
 
-      {/* Temp */}
-      <div className="text-6xl font-extrabold mt-2">
-        {Math.round(weather.main.temp)}°C
-      </div>
+        {/* City */}
+        <h2 className="text-4xl font-bold">
+          {weather.name}, {weather.sys.country}
+        </h2>
 
-      {/* Condition */}
-      <p className="text-lg opacity-80 capitalize">
-        {weather.weather[0].description}
-      </p>
-
-      {/* EXTRA DETAILS 🔥 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-
-        <div className="bg-white/10 p-4 rounded-xl text-center">
-          <p className="text-sm opacity-70">Humidity</p>
-          <p className="text-xl font-semibold">
-            {weather.main.humidity}%
-          </p>
+        {/* Temp */}
+        <div className="text-7xl font-extrabold mt-2 tracking-tight">
+          {Math.round(weather.main.temp)}°
         </div>
 
-        <div className="bg-white/10 p-4 rounded-xl text-center">
-          <p className="text-sm opacity-70">Wind Speed</p>
-          <p className="text-xl font-semibold">
-            {weather.wind.speed} m/s
-          </p>
-        </div>
+        {/* Condition */}
+        <p className="text-xl opacity-80 capitalize">
+          {weather.weather[0].description}
+        </p>
 
-        <div className="bg-white/10 p-4 rounded-xl text-center">
-          <p className="text-sm opacity-70">Pressure</p>
-          <p className="text-xl font-semibold">
-            {weather.main.pressure} hPa
-          </p>
-        </div>
+        {/* DETAILS GRID 🔥 */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
 
-        <div className="bg-white/10 p-4 rounded-xl text-center">
-          <p className="text-sm opacity-70">Feels Like</p>
-          <p className="text-xl font-semibold">
-            {Math.round(weather.main.feels_like)}°C
-          </p>
-        </div>
+          <div className="glass-card">
+            <Droplets />
+            <p>{weather.main.humidity}%</p>
+            <span>Humidity</span>
+          </div>
 
+          <div className="glass-card">
+            <Wind />
+            <p>{weather.wind.speed} m/s</p>
+            <span>Wind</span>
+          </div>
+
+          <div className="glass-card">
+            <Gauge />
+            <p>{weather.main.pressure} hPa</p>
+            <span>Pressure</span>
+          </div>
+
+          <div className="glass-card">
+            <Thermometer />
+            <p>{Math.round(weather.main.feels_like)}°</p>
+            <span>Feels Like</span>
+          </div>
+
+        </div>
       </div>
     </motion.div>
   );
