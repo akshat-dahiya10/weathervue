@@ -152,7 +152,6 @@ export default function Home() {
     }
   }, [persistLastSearch, saveToRecentSearches]);
 
-  // 🔥 EXISTING LOAD
   useEffect(() => {
     setRecentSearches(parseRecentSearches(localStorage.getItem(RECENT_SEARCHES_KEY)));
 
@@ -165,7 +164,6 @@ export default function Home() {
     }
   }, [fetchWeatherData]);
 
-  // 🌍 AUTO LOCATION
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -175,16 +173,13 @@ export default function Home() {
 
     if (hasLastSearch) return;
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        fetchWeatherData({
-          city: "Current Location",
-          lat: pos.coords.latitude,
-          lon: pos.coords.longitude,
-        });
-      },
-      (err) => console.log(err.message)
-    );
+    navigator.geolocation.getCurrentPosition((pos) => {
+      fetchWeatherData({
+        city: "Current Location",
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+      });
+    });
   }, [fetchWeatherData]);
 
   const handleSearch = (city: string, lat?: number, lon?: number) => {
@@ -204,7 +199,7 @@ export default function Home() {
           : "from-gray-900 via-blue-900/50 to-gray-900"
       }`}
     >
-      {/* Background glow */}
+      {/* Glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 blur-3xl animate-pulse" />
@@ -212,16 +207,29 @@ export default function Home() {
 
       <Navbar onSearch={handleSearch} isLoading={isLoading} />
 
-      <main className="pt-24 px-4">
+      <main className="pt-24 px-4 max-w-7xl mx-auto">
         <AnimatePresence mode="wait">
           {isLoading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorMessage message={error} />
           ) : weather && forecast ? (
-            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
-              <WeatherCard weather={weather} />
-              <ForecastSection forecast={forecast} />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            >
+              {/* LEFT SIDE */}
+              <div className="lg:col-span-2 space-y-6">
+                <WeatherCard weather={weather} />
+                <ForecastSection forecast={forecast} />
+                <RecentSearches searches={recentSearches} onSelect={handleSearch} />
+              </div>
+
+              {/* RIGHT SIDE 🔥 */}
+              <div>
+                <SidePanel weather={weather} forecast={forecast} />
+              </div>
             </motion.div>
           ) : (
             <WelcomeScreen />
