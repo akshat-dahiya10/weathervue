@@ -1,162 +1,333 @@
 @import "tailwindcss";
 
 /* =========================
-   🎨 THEME COLORS
+   PREMIUM DESIGN TOKENS
 ========================= */
+
 @theme {
   --color-primary: #3b82f6;
   --color-secondary: #8b5cf6;
   --color-accent: #22d3ee;
 
-  --color-bg-dark: #0b1220;
-  --color-glass: rgba(255, 255, 255, 0.08);
-  --color-border: rgba(255, 255, 255, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 /* =========================
-   🌌 GLOBAL BACKGROUND
+   GLOBAL RESET
 ========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: radial-gradient(circle at 20% 20%, #1e3a8a, transparent),
-              radial-gradient(circle at 80% 80%, #7c3aed, transparent),
-              #0b1220;
-  color: white;
+  min-height: 100vh;
   overflow-x: hidden;
+  color: white;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(14,165,233,.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 15%,
+      rgba(168,85,247,.20),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(59,130,246,.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #020617,
+      #0f172a,
+      #111827
+    );
+
+  background-attachment: fixed;
 }
 
 /* =========================
-   🍎 APPLE GLASS SYSTEM
+   PREMIUM GLASS SYSTEM
 ========================= */
+
 .apple-glass {
-  background: var(--color-glass);
+  background: rgba(255,255,255,0.06);
+
   backdrop-filter: blur(30px);
-  border-radius: 28px;
-  border: 1px solid var(--color-border);
+
+  border: 1px solid rgba(255,255,255,0.10);
+
+  border-radius: 30px;
+
   box-shadow:
-    0 10px 30px rgba(0,0,0,0.4),
-    inset 0 1px 1px rgba(255,255,255,0.2);
-  transition: all 0.3s ease;
+    0 20px 60px rgba(0,0,0,0.40),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+
+  transition: all .35s ease;
 }
 
 .apple-glass:hover {
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-4px);
+
   box-shadow:
-    0 20px 50px rgba(0,0,0,0.6),
-    inset 0 1px 2px rgba(255,255,255,0.3);
+    0 30px 80px rgba(0,0,0,0.55),
+    0 0 30px rgba(59,130,246,.12);
 }
 
 /* =========================
-   💎 GLASS CARD (SMALL)
+   GLASS CARD
 ========================= */
+
 .glass-card {
-  @apply flex flex-col items-center justify-center gap-2 
-  p-4 rounded-xl border transition-all duration-300;
-  
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.12);
-  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 20px;
+
+  border-radius: 24px;
+
+  background: rgba(255,255,255,.05);
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  backdrop-filter: blur(24px);
+
+  transition: all .35s ease;
 }
 
 .glass-card:hover {
-  background: rgba(255,255,255,0.15);
-  transform: scale(1.05);
+  transform: translateY(-6px);
+
+  background: rgba(255,255,255,.09);
+
+  border-color: rgba(59,130,246,.25);
+
+  box-shadow:
+    0 10px 40px rgba(59,130,246,.18);
 }
 
 /* =========================
-   ✨ ANIMATIONS
+   GLOW UTILITIES
 ========================= */
 
-/* Floating */
+.glow-border {
+  position: relative;
+}
+
+.glow-border::before {
+  content: "";
+
+  position: absolute;
+  inset: -1px;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(59,130,246,.45),
+      rgba(168,85,247,.35)
+    );
+
+  filter: blur(18px);
+
+  z-index: -1;
+}
+
+.blue-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  border-radius: 999px;
+
+  background: rgba(59,130,246,.12);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+.purple-glow {
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  border-radius: 999px;
+
+  background: rgba(168,85,247,.12);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  0%,100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
 }
 
-/* Gradient Move */
-@keyframes gradient-shift {
-  0%,100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes pulseGlow {
+  0%,100% {
+    opacity: .5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
-/* Glow Pulse */
-@keyframes pulse-glow {
-  0%,100% { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
-  50% { box-shadow: 0 0 50px rgba(59,130,246,0.6); }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Fade In */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(25px);}
-  to { opacity: 1; transform: translateY(0);}
+@keyframes shimmer {
+  from {
+    background-position: -200% center;
+  }
+
+  to {
+    background-position: 200% center;
+  }
 }
 
-/* Slide Up */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(40px);}
-  to { opacity: 1; transform: translateY(0);}
+.animate-float {
+  animation: float 5s ease-in-out infinite;
 }
 
-/* Classes */
-.animate-float { animation: float 4s ease-in-out infinite; }
-.animate-gradient { background-size: 200% 200%; animation: gradient-shift 6s ease infinite; }
-.animate-pulse-glow { animation: pulse-glow 2s infinite; }
-.fade-in { animation: fadeIn 0.6s ease forwards; }
-.slide-up { animation: slideUp 0.5s ease forwards; }
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.fade-up {
+  animation: fadeUp .6s ease forwards;
+}
+
+.shimmer {
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
 
 /* =========================
-   🌧️ RAIN EFFECT
+   WEATHER EFFECTS
 ========================= */
+
 .rain {
   position: absolute;
   inset: 0;
+
   pointer-events: none;
-  background-image: linear-gradient(transparent, rgba(255,255,255,0.25));
+
+  background-image:
+    linear-gradient(
+      transparent,
+      rgba(255,255,255,.20)
+    );
+
   background-size: 2px 18px;
-  animation: rain 0.4s linear infinite;
-  opacity: 0.3;
+
+  opacity: .25;
+
+  animation: rain 0.45s linear infinite;
 }
 
 @keyframes rain {
-  from { background-position: 0 0; }
-  to { background-position: 0 20px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 20px;
+  }
 }
 
-/* =========================
-   ❄️ SNOW EFFECT
-========================= */
 .snow {
   position: absolute;
   inset: 0;
+
   pointer-events: none;
-  background-image: radial-gradient(white 1px, transparent 1px);
-  background-size: 18px 18px;
+
+  background-image:
+    radial-gradient(
+      white 1px,
+      transparent 1px
+    );
+
+  background-size: 20px 20px;
+
+  opacity: .35;
+
   animation: snow 12s linear infinite;
-  opacity: 0.4;
 }
 
 @keyframes snow {
-  from { background-position: 0 0; }
-  to { background-position: 0 200px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 0 220px;
+  }
 }
 
 /* =========================
-   ☁️ CLOUD GLOW EFFECT
+   CLOUD LIGHT
 ========================= */
+
 .cloud-glow {
   position: absolute;
-  width: 400px;
-  height: 400px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 50%;
-  filter: blur(80px);
+
+  width: 450px;
+  height: 450px;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.06);
+
+  filter: blur(90px);
+
   animation: float 8s ease-in-out infinite;
 }
 
 /* =========================
-   🧊 SCROLLBAR
+   SCROLLBAR
 ========================= */
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -164,27 +335,32 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
-  border-radius: 10px;
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,.35);
 }
 
 /* =========================
-   🔍 SELECTION
+   TEXT SELECTION
 ========================= */
+
 ::selection {
-  background: rgba(59,130,246,0.5);
+  background: rgba(59,130,246,.45);
   color: white;
 }
 
 /* =========================
-   🚫 NO SCROLLBAR CLASS
+   NO SCROLLBAR
 ========================= */
-.no-scrollbar::-webkit-scrollbar { display: none; }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .no-scrollbar {
-  -ms-overflow-style: none;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
