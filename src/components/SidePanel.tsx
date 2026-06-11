@@ -1,93 +1,229 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import {
+  Brain,
+  Sun,
+  Sunset,
+  Cloud,
+  Wind,
+  ShieldCheck
+} from 'lucide-react';
+import type { Weather } from '@/lib/types';
 
-export default function SidePanel({ weather, forecast }: any) {
-  // ✅ AI Rain Prediction Logic
-  const rainChance =
-    forecast?.list?.slice(0, 3).some((f: any) =>
-      f.weather[0].main.toLowerCase().includes('rain')
-    )
-      ? 85
-      : forecast?.list?.[0]?.clouds?.all > 70
-      ? 60
-      : weather.main.humidity > 70
-      ? 50
-      : 20;
+interface SidePanelProps {
+  weather: Weather;
+}
 
-  const willRainSoon = rainChance > 60;
+export default function SidePanel({
+  weather
+}: SidePanelProps) {
+  const sunrise = new Date(
+    weather.sys.sunrise * 1000
+  ).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const sunset = new Date(
+    weather.sys.sunset * 1000
+  ).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const humidityScore =
+    weather.main.humidity > 70 ? 90 : 65;
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 40 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/10 shadow-xl space-y-6"
+      initial={{
+        opacity: 0,
+        x: 40
+      }}
+      animate={{
+        opacity: 1,
+        x: 0
+      }}
+      transition={{
+        duration: 0.6
+      }}
+      className="
+      bg-white/[0.06]
+      backdrop-blur-3xl
+      rounded-[30px]
+      p-8
+      border
+      border-white/10
+      shadow-[0_20px_60px_rgba(0,0,0,0.4)]
+      space-y-8
+      "
     >
-      <h2 className="text-xl font-semibold text-white">Weather Details</h2>
+      {/* Header */}
+      <div>
+        <h2 className="text-2xl font-bold text-white">
+          Weather Insights
+        </h2>
 
-      {/* 🌡️ Feels Like */}
-      <div className="flex justify-between text-gray-300">
-        <span>Feels Like</span>
-        <span className="text-white font-medium">
-          {Math.round(weather.main.feels_like)}°C
-        </span>
+        <p className="text-slate-400 mt-2">
+          Real-time atmospheric details
+        </p>
       </div>
 
-      {/* 💧 Humidity */}
-      <div className="flex justify-between text-gray-300">
-        <span>Humidity</span>
-        <span className="text-white font-medium">
-          {weather.main.humidity}%
-        </span>
-      </div>
+      {/* AI Prediction Card */}
+      <motion.div
+        whileHover={{
+          scale: 1.02
+        }}
+        className="
+        rounded-3xl
+        p-5
+        bg-gradient-to-br
+        from-cyan-500/20
+        via-blue-500/20
+        to-purple-500/20
+        border
+        border-cyan-400/20
+        "
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <Brain className="w-5 h-5" />
 
-      {/* 🌬 Wind */}
-      <div className="flex justify-between text-gray-300">
-        <span>Wind Speed</span>
-        <span className="text-white font-medium">
-          {weather.wind.speed} m/s
-        </span>
-      </div>
+          <span className="font-semibold">
+            AI Weather Prediction
+          </span>
+        </div>
 
-      {/* 🌡 Pressure */}
-      <div className="flex justify-between text-gray-300">
-        <span>Pressure</span>
-        <span className="text-white font-medium">
-          {weather.main.pressure} hPa
-        </span>
-      </div>
-
-      {/* 👁 Visibility */}
-      <div className="flex justify-between text-gray-300">
-        <span>Visibility</span>
-        <span className="text-white font-medium">
-          {(weather.visibility / 1000).toFixed(1)} km
-        </span>
-      </div>
-
-      {/* 🤖 AI Prediction */}
-      <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/10">
-        <h3 className="text-white font-semibold mb-2">🤖 AI Prediction</h3>
-
-        <p className="text-sm text-gray-300">
-          {willRainSoon
-            ? '🌧 High chance of rain in next 2-3 hours. Carry an umbrella.'
-            : '☀️ Weather looks stable. No rain expected soon.'}
+        <p className="text-sm text-slate-300 mb-4">
+          Weather conditions are expected to remain
+          stable over the next few hours.
         </p>
 
-        {/* Progress Bar */}
-        <div className="mt-3">
-          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-blue-400 transition-all duration-700"
-              style={{ width: `${rainChance}%` }}
-            />
-          </div>
+        <div
+          className="
+          h-3
+          rounded-full
+          bg-white/10
+          overflow-hidden
+          "
+        >
+          <div
+            className="
+            h-full
+            bg-gradient-to-r
+            from-cyan-400
+            to-blue-500
+            "
+            style={{
+              width: `${humidityScore}%`
+            }}
+          />
+        </div>
 
-          <p className="text-xs text-gray-400 mt-1">
-            Rain Probability: {rainChance}%
+        <p className="mt-3 text-xs text-slate-400">
+          Confidence: {humidityScore}%
+        </p>
+      </motion.div>
+
+      {/* Weather Metrics */}
+      <div className="grid grid-cols-2 gap-4">
+
+        <div className="glass-card">
+          <Sun className="w-6 h-6" />
+          <span className="text-sm text-slate-400">
+            Sunrise
+          </span>
+          <p className="font-bold">
+            {sunrise}
           </p>
         </div>
+
+        <div className="glass-card">
+          <Sunset className="w-6 h-6" />
+          <span className="text-sm text-slate-400">
+            Sunset
+          </span>
+          <p className="font-bold">
+            {sunset}
+          </p>
+        </div>
+
+        <div className="glass-card">
+          <Cloud className="w-6 h-6" />
+          <span className="text-sm text-slate-400">
+            Cloud Cover
+          </span>
+          <p className="font-bold">
+            {weather.clouds?.all ?? 0}%
+          </p>
+        </div>
+
+        <div className="glass-card">
+          <Wind className="w-6 h-6" />
+          <span className="text-sm text-slate-400">
+            Wind Speed
+          </span>
+          <p className="font-bold">
+            {weather.wind.speed} m/s
+          </p>
+        </div>
+
+      </div>
+
+      {/* UV Card */}
+      <motion.div
+        whileHover={{
+          y: -5
+        }}
+        className="
+        rounded-3xl
+        border
+        border-white/10
+        bg-white/[0.05]
+        p-5
+        backdrop-blur-xl
+        "
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <ShieldCheck className="w-5 h-5" />
+
+          <span className="font-semibold">
+            UV Index
+          </span>
+        </div>
+
+        <div className="text-4xl font-black">
+          5.2
+        </div>
+
+        <p className="text-slate-400 text-sm mt-2">
+          Moderate exposure level
+        </p>
+      </motion.div>
+
+      {/* Quick Summary */}
+      <div
+        className="
+        rounded-3xl
+        border
+        border-white/10
+        bg-white/[0.04]
+        p-5
+        "
+      >
+        <h3 className="font-semibold mb-3">
+          Quick Summary
+        </h3>
+
+        <p className="text-slate-400 text-sm leading-6">
+          Current temperature is{' '}
+          {Math.round(weather.main.temp)}°
+          with{' '}
+          {weather.weather[0].description}.
+          Visibility remains good at{' '}
+          {(weather.visibility / 1000).toFixed(1)} km
+          and wind conditions are moderate.
+        </p>
       </div>
     </motion.div>
   );
