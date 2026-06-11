@@ -73,11 +73,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
-  const [lastSearch, setLastSearch] = useState<StoredSearchLocation | null>(null);
   const requestIdRef = useRef(0);
 
   const persistLastSearch = useCallback((search: StoredSearchLocation) => {
-    setLastSearch(search);
     try {
       localStorage.setItem(LAST_SEARCH_KEY, JSON.stringify(search));
       localStorage.removeItem(LEGACY_LAST_CITY_KEY);
@@ -136,46 +134,36 @@ export default function Home() {
       setWeather(resolvedWeather);
       setForecast(resolvedForecast);
 
-      const resolvedSearch = {
-        city: resolvedWeather.name,
-        country: resolvedWeather.sys.country,
-        lat: resolvedWeather.coord.lat,
-        lon: resolvedWeather.coord.lon,
-      };
-
-      persistLastSearch(resolvedSearch);
       saveToRecentSearches(resolvedWeather);
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [persistLastSearch, saveToRecentSearches]);
+  }, [saveToRecentSearches, persistLastSearch]);
 
   useEffect(() => {
     setRecentSearches(parseRecentSearches(localStorage.getItem(RECENT_SEARCHES_KEY)));
 
-    const savedLastSearch =
+    const savedLast =
       parseLastSearch(localStorage.getItem(LAST_SEARCH_KEY)) ??
       parseLastSearch(localStorage.getItem(LEGACY_LAST_CITY_KEY));
 
-    if (savedLastSearch) {
-      fetchWeatherData(savedLastSearch);
-    }
+    if (savedLast) fetchWeatherData(savedLast);
   }, [fetchWeatherData]);
 
   useEffect(() => {
     if (!navigator.geolocation) return;
 
-    const hasLastSearch =
+    const hasLast =
       localStorage.getItem(LAST_SEARCH_KEY) ||
       localStorage.getItem(LEGACY_LAST_CITY_KEY);
 
-    if (hasLastSearch) return;
+    if (hasLast) return;
 
     navigator.geolocation.getCurrentPosition((pos) => {
       fetchWeatherData({
-        city: "Current Location",
+        city: 'Current Location',
         lat: pos.coords.latitude,
         lon: pos.coords.longitude,
       });
@@ -187,24 +175,7 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={`min-h-screen transition-all duration-500 bg-gradient-to-br
-      ${
-        weather?.weather?.[0]?.main === "Rain"
-          ? "from-blue-900 via-gray-900 to-black"
-          : weather?.weather?.[0]?.main === "Clear"
-          ? "from-yellow-400 via-orange-500 to-pink-500"
-          : weather?.weather?.[0]?.main === "Clouds"
-          ? "from-gray-700 via-gray-900 to-black"
-          : "from-gray-900 via-blue-900/50 to-gray-900"
-      }`}
-    >
-      {/* Glow */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 blur-3xl animate-pulse" />
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
       <Navbar onSearch={handleSearch} isLoading={isLoading} />
 
       <main className="pt-24 px-4 max-w-7xl mx-auto">
@@ -214,22 +185,27 @@ export default function Home() {
           ) : error ? (
             <ErrorMessage message={error} />
           ) : weather && forecast ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-            >
-              {/* LEFT SIDE */}
+            <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+              {/* LEFT */}
               <div className="lg:col-span-2 space-y-6">
                 <WeatherCard weather={weather} />
                 <ForecastSection forecast={forecast} />
-                <RecentSearches searches={recentSearches} onSelect={handleSearch} />
+
+                {/* ✅ FIXED ERROR HERE */}
+                <RecentSearches
+                  searches={recentSearches}
+                  onSelect={(search) =>
+                    handleSearch(search.city, search.lat, search.lon)
+                  }
+                />
               </div>
 
-              {/* RIGHT SIDE 🔥 */}
+              {/* RIGHT */}
               <div>
                 <SidePanel weather={weather} forecast={forecast} />
               </div>
+
             </motion.div>
           ) : (
             <WelcomeScreen />
