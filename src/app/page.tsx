@@ -16,7 +16,9 @@ const RECENT_SEARCHES_KEY = 'weather-vue-recent-searches';
 const LAST_SEARCH_KEY = 'weather-vue-last-search';
 const LEGACY_LAST_CITY_KEY = 'weather-vue-last-city';
 
-function hasCoordinates(search: StoredSearchLocation): search is StoredSearchLocation & { lat: number; lon: number } {
+function hasCoordinates(
+  search: StoredSearchLocation
+): search is StoredSearchLocation & { lat: number; lon: number } {
   return typeof search.lat === 'number' && typeof search.lon === 'number';
 }
 
@@ -94,8 +96,13 @@ export default function Home() {
 
     setRecentSearches((prev) => {
       const filtered = prev.filter(
-        (item) => !(item.city.toLowerCase() === search.city.toLowerCase() && item.country === search.country)
+        (item) =>
+          !(
+            item.city.toLowerCase() === search.city.toLowerCase() &&
+            item.country === search.country
+          )
       );
+
       const updated = [search, ...filtered].slice(0, 10);
 
       try {
@@ -106,44 +113,59 @@ export default function Home() {
     });
   }, []);
 
-  const fetchWeatherData = useCallback(async (search: StoredSearchLocation) => {
-    const requestId = ++requestIdRef.current;
-    setIsLoading(true);
-    setError(null);
-    persistLastSearch(search);
-
+  // ✅ FIX: CLEAR FUNCTION ADDED
+  const handleClearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
     try {
-      const queryParams = hasCoordinates(search)
-        ? `lat=${search.lat}&lon=${search.lon}`
-        : `city=${encodeURIComponent(search.city)}`;
+      localStorage.removeItem(RECENT_SEARCHES_KEY);
+    } catch {}
+  }, []);
 
-      const [weatherRes, forecastRes] = await Promise.all([
-        fetch(`/api/weather?${queryParams}`, { cache: 'no-store' }),
-        fetch(`/api/forecast?${queryParams}`, { cache: 'no-store' }),
-      ]);
+  const fetchWeatherData = useCallback(
+    async (search: StoredSearchLocation) => {
+      const requestId = ++requestIdRef.current;
+      setIsLoading(true);
+      setError(null);
+      persistLastSearch(search);
 
-      const weatherResult = await weatherRes.json();
-      const forecastResult = await forecastRes.json();
+      try {
+        const queryParams = hasCoordinates(search)
+          ? `lat=${search.lat}&lon=${search.lon}`
+          : `city=${encodeURIComponent(search.city)}`;
 
-      if (!weatherRes.ok || !weatherResult.success) throw new Error(weatherResult.error);
-      if (!forecastRes.ok || !forecastResult.success) throw new Error(forecastResult.error);
+        const [weatherRes, forecastRes] = await Promise.all([
+          fetch(`/api/weather?${queryParams}`, { cache: 'no-store' }),
+          fetch(`/api/forecast?${queryParams}`, { cache: 'no-store' }),
+        ]);
 
-      const resolvedWeather = weatherResult.data;
-      const resolvedForecast = forecastResult.data;
+        const weatherResult = await weatherRes.json();
+        const forecastResult = await forecastRes.json();
 
-      setWeather(resolvedWeather);
-      setForecast(resolvedForecast);
+        if (!weatherRes.ok || !weatherResult.success)
+          throw new Error(weatherResult.error);
+        if (!forecastRes.ok || !forecastResult.success)
+          throw new Error(forecastResult.error);
 
-      saveToRecentSearches(resolvedWeather);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [saveToRecentSearches, persistLastSearch]);
+        const resolvedWeather = weatherResult.data;
+        const resolvedForecast = forecastResult.data;
+
+        setWeather(resolvedWeather);
+        setForecast(resolvedForecast);
+
+        saveToRecentSearches(resolvedWeather);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [saveToRecentSearches, persistLastSearch]
+  );
 
   useEffect(() => {
-    setRecentSearches(parseRecentSearches(localStorage.getItem(RECENT_SEARCHES_KEY)));
+    setRecentSearches(
+      parseRecentSearches(localStorage.getItem(RECENT_SEARCHES_KEY))
+    );
 
     const savedLast =
       parseLastSearch(localStorage.getItem(LAST_SEARCH_KEY)) ??
@@ -186,26 +208,22 @@ export default function Home() {
             <ErrorMessage message={error} />
           ) : weather && forecast ? (
             <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-              {/* LEFT */}
               <div className="lg:col-span-2 space-y-6">
                 <WeatherCard weather={weather} />
                 <ForecastSection forecast={forecast} />
 
-                {/* ✅ FIXED ERROR HERE */}
                 <RecentSearches
                   searches={recentSearches}
                   onSelect={(search) =>
                     handleSearch(search.city, search.lat, search.lon)
                   }
+                  onClear={handleClearRecentSearches}   // ✅ FIXED
                 />
               </div>
 
-              {/* RIGHT */}
               <div>
                 <SidePanel weather={weather} forecast={forecast} />
               </div>
-
             </motion.div>
           ) : (
             <WelcomeScreen />
