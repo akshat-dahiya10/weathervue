@@ -1,59 +1,173 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Droplets, Wind, Gauge, Thermometer } from 'lucide-react';
+import {
+  Droplets,
+  Wind,
+  Gauge,
+  Thermometer,
+  Eye,
+  Cloud,
+  Sun,
+  Sunset
+} from 'lucide-react';
 import type { Weather } from '@/lib/types';
 
 export default function WeatherCard({ weather }: { weather: Weather }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative max-w-4xl mx-auto p-[1px] rounded-3xl bg-gradient-to-r from-white/20 to-white/5"
+      transition={{ duration: 0.6 }}
+      className="relative max-w-5xl mx-auto overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.06] backdrop-blur-3xl shadow-[0_20px_80px_rgba(0,0,0,0.45)]"
     >
-      <div className="bg-black/30 backdrop-blur-2xl rounded-3xl p-8 text-white shadow-2xl">
+      {/* Glow */}
+      <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl" />
+      <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-500/20 blur-3xl" />
 
-        {/* City */}
-        <h2 className="text-4xl font-bold">
-          {weather.name}, {weather.sys.country}
-        </h2>
+      <div className="relative p-8 md:p-10 text-white">
 
-        {/* Temp */}
-        <div className="text-7xl font-extrabold mt-2 tracking-tight">
-          {Math.round(weather.main.temp)}°
+        {/* Location */}
+        <div className="mb-8">
+          <h2 className="text-5xl md:text-6xl font-black tracking-tight">
+            {weather.name}
+          </h2>
+
+          <p className="text-slate-400 text-lg mt-2">
+            {weather.sys.country}
+          </p>
         </div>
 
-        {/* Condition */}
-        <p className="text-xl opacity-80 capitalize">
-          {weather.weather[0].description}
-        </p>
+        {/* Temperature */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
 
-        {/* DETAILS GRID 🔥 */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+          <div>
+            <div className="text-8xl md:text-9xl font-black leading-none">
+              {Math.round(weather.main.temp)}°
+            </div>
 
-          <div className="glass-card">
+            <p className="text-2xl text-slate-300 capitalize mt-4">
+              {weather.weather[0].description}
+            </p>
+
+            <div className="flex gap-4 mt-5 text-slate-400">
+              <span>
+                H: {Math.round(weather.main.temp_max)}°
+              </span>
+
+              <span>
+                L: {Math.round(weather.main.temp_min)}°
+              </span>
+            </div>
+          </div>
+
+          {/* Weather Icon */}
+          <motion.div
+            animate={{
+              y: [0, -10, 0]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity
+            }}
+            className="hidden lg:flex items-center justify-center"
+          >
+            <div className="text-[120px]">
+              ☁️
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
             <Droplets />
-            <p>{weather.main.humidity}%</p>
+            <p className="text-xl font-bold">
+              {weather.main.humidity}%
+            </p>
             <span>Humidity</span>
-          </div>
+          </motion.div>
 
-          <div className="glass-card">
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
             <Wind />
-            <p>{weather.wind.speed} m/s</p>
+            <p className="text-xl font-bold">
+              {weather.wind.speed} m/s
+            </p>
             <span>Wind</span>
-          </div>
+          </motion.div>
 
-          <div className="glass-card">
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
             <Gauge />
-            <p>{weather.main.pressure} hPa</p>
+            <p className="text-xl font-bold">
+              {weather.main.pressure} hPa
+            </p>
             <span>Pressure</span>
-          </div>
+          </motion.div>
 
-          <div className="glass-card">
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
             <Thermometer />
-            <p>{Math.round(weather.main.feels_like)}°</p>
+            <p className="text-xl font-bold">
+              {Math.round(weather.main.feels_like)}°
+            </p>
             <span>Feels Like</span>
-          </div>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
+            <Eye />
+            <p className="text-xl font-bold">
+              {(weather.visibility / 1000).toFixed(1)} km
+            </p>
+            <span>Visibility</span>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
+            <Cloud />
+            <p className="text-xl font-bold">
+              {weather.clouds?.all ?? 0}%
+            </p>
+            <span>Cloud Cover</span>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
+            <Sun />
+            <p className="text-xl font-bold">
+              {Math.round(weather.main.temp_max)}°
+            </p>
+            <span>Max Temp</span>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ y: -6 }}
+            className="glass-card"
+          >
+            <Sunset />
+            <p className="text-xl font-bold">
+              {Math.round(weather.main.temp_min)}°
+            </p>
+            <span>Min Temp</span>
+          </motion.div>
 
         </div>
       </div>
