@@ -197,7 +197,7 @@ export default function Home() {
     fetchWeatherData({ city, lat, lon });
   };
 
-  return (
+ return (
   <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
 
     {/* 🔥 Background */}
@@ -208,13 +208,6 @@ export default function Home() {
       <Navbar onSearch={handleSearch} isLoading={isLoading} />
 
       <main className="pt-24 px-4 max-w-7xl mx-auto">
-      </main>
-    </div>
-
-  </div>
-);
-
-      <main className="pt-24 px-4 max-w-7xl mx-auto">
         <AnimatePresence mode="wait">
           {isLoading ? (
             <LoadingSkeleton />
@@ -222,6 +215,7 @@ export default function Home() {
             <ErrorMessage message={error} />
           ) : weather && forecast ? (
             <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
               <div className="lg:col-span-2 space-y-6">
                 <WeatherCard weather={weather} />
                 <ForecastSection forecast={forecast} />
@@ -231,13 +225,14 @@ export default function Home() {
                   onSelect={(search) =>
                     handleSearch(search.city, search.lat, search.lon)
                   }
-                  onClear={handleClearRecentSearches}   // ✅ FIXED
+                  onClear={handleClearRecentSearches}
                 />
               </div>
 
               <div>
                 <SidePanel weather={weather} forecast={forecast} />
               </div>
+
             </motion.div>
           ) : (
             <WelcomeScreen />
@@ -245,5 +240,6 @@ export default function Home() {
         </AnimatePresence>
       </main>
     </div>
-  );
-}
+
+  </div>
+);
