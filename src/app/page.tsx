@@ -11,6 +11,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton';
 import ErrorMessage from '@/components/ErrorMessage';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import type { Forecast, RecentSearch, StoredSearchLocation, Weather } from '@/lib/types';
+import Particles from "@/components/Particles";
 
 const RECENT_SEARCHES_KEY = 'weather-vue-recent-searches';
 const LAST_SEARCH_KEY = 'weather-vue-last-search';
@@ -197,8 +198,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
+  <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
+
+    {/* 🔥 Background */}
+    <Particles />
+
+    {/* 🔥 Foreground UI */}
+    <div className="relative z-10">
       <Navbar onSearch={handleSearch} isLoading={isLoading} />
+
+      <main className="pt-24 px-4 max-w-7xl mx-auto">
+      </main>
+    </div>
+
+  </div>
+);
 
       <main className="pt-24 px-4 max-w-7xl mx-auto">
         <AnimatePresence mode="wait">
