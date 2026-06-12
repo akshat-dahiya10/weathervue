@@ -9,45 +9,50 @@ import {
   Wind,
   ShieldCheck
 } from 'lucide-react';
-import type { Weather } from '@/lib/types';
+
+import type { Weather, Forecast } from '@/lib/types';
 
 interface SidePanelProps {
   weather: Weather;
+  forecast?: Forecast; // ✅ FIX (optional for safety)
 }
 
 export default function SidePanel({
-  weather
+  weather,
+  forecast
 }: SidePanelProps) {
+
+  // ✅ SAFE GUARDS (avoid crash)
+  if (!weather) return null;
+
   const sunrise = new Date(
-    weather.sys.sunrise * 1000
+    weather.sys?.sunrise * 1000
   ).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   });
 
   const sunset = new Date(
-    weather.sys.sunset * 1000
+    weather.sys?.sunset * 1000
   ).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   });
 
   const humidityScore =
-    weather.main.humidity > 70 ? 90 : 65;
+    weather.main?.humidity > 70 ? 90 : 65;
+
+  // ✅ OPTIONAL forecast usage
+  const nextHour = forecast?.list?.[0];
+  const rainChance = nextHour?.pop
+    ? Math.round(nextHour.pop * 100)
+    : null;
 
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        x: 40
-      }}
-      animate={{
-        opacity: 1,
-        x: 0
-      }}
-      transition={{
-        duration: 0.6
-      }}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6 }}
       className="
       bg-white/[0.06]
       backdrop-blur-3xl
@@ -59,6 +64,7 @@ export default function SidePanel({
       space-y-8
       "
     >
+
       {/* Header */}
       <div>
         <h2 className="text-2xl font-bold text-white">
@@ -72,9 +78,7 @@ export default function SidePanel({
 
       {/* AI Prediction Card */}
       <motion.div
-        whileHover={{
-          scale: 1.02
-        }}
+        whileHover={{ scale: 1.02 }}
         className="
         rounded-3xl
         p-5
@@ -88,40 +92,28 @@ export default function SidePanel({
       >
         <div className="flex items-center gap-3 mb-4">
           <Brain className="w-5 h-5" />
-
           <span className="font-semibold">
             AI Weather Prediction
           </span>
         </div>
 
         <p className="text-sm text-slate-300 mb-4">
-          Weather conditions are expected to remain
-          stable over the next few hours.
+          {rainChance
+            ? `Rain probability in next hour is ${rainChance}%`
+            : `Weather conditions are expected to remain stable over the next few hours.`}
         </p>
 
-        <div
-          className="
-          h-3
-          rounded-full
-          bg-white/10
-          overflow-hidden
-          "
-        >
+        <div className="h-3 rounded-full bg-white/10 overflow-hidden">
           <div
-            className="
-            h-full
-            bg-gradient-to-r
-            from-cyan-400
-            to-blue-500
-            "
+            className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
             style={{
-              width: `${humidityScore}%`
+              width: `${rainChance ?? humidityScore}%`
             }}
           />
         </div>
 
         <p className="mt-3 text-xs text-slate-400">
-          Confidence: {humidityScore}%
+          Confidence: {rainChance ?? humidityScore}%
         </p>
       </motion.div>
 
@@ -164,7 +156,7 @@ export default function SidePanel({
             Wind Speed
           </span>
           <p className="font-bold">
-            {weather.wind.speed} m/s
+            {weather.wind?.speed ?? 0} m/s
           </p>
         </div>
 
@@ -172,9 +164,7 @@ export default function SidePanel({
 
       {/* UV Card */}
       <motion.div
-        whileHover={{
-          y: -5
-        }}
+        whileHover={{ y: -5 }}
         className="
         rounded-3xl
         border
@@ -186,7 +176,6 @@ export default function SidePanel({
       >
         <div className="flex items-center gap-3 mb-3">
           <ShieldCheck className="w-5 h-5" />
-
           <span className="font-semibold">
             UV Index
           </span>
@@ -217,9 +206,9 @@ export default function SidePanel({
 
         <p className="text-slate-400 text-sm leading-6">
           Current temperature is{' '}
-          {Math.round(weather.main.temp)}°
+          {Math.round(weather.main?.temp)}°
           with{' '}
-          {weather.weather[0].description}.
+          {weather.weather?.[0]?.description}.
           Visibility remains good at{' '}
           {(weather.visibility / 1000).toFixed(1)} km
           and wind conditions are moderate.
