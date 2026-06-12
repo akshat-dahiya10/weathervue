@@ -25,7 +25,7 @@ export default function SidePanel({
   forecast
 }: SidePanelProps) {
 
-  const { ref, onMouseMove, onMouseLeave } = useTilt();
+  const tilt = useTilt();
 
   const sunrise = new Date(
     weather.sys.sunrise * 1000
