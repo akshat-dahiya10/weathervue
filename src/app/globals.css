@@ -19,6 +19,8 @@
 
 * {
   box-sizing: border-box;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 html {
@@ -31,526 +33,57 @@ body {
   color: white;
 
   background:
-    radial-gradient(
-      circle at 10% 10%,
-      rgba(14,165,233,.25),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 90% 15%,
-      rgba(168,85,247,.20),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      rgba(59,130,246,.18),
-      transparent 35%
-    ),
-    linear-gradient(
-      135deg,
-      #020617,
-      #0f172a,
-      #111827
-    );
+    radial-gradient(circle at 10% 10%, rgba(14,165,233,.25), transparent 30%),
+    radial-gradient(circle at 90% 15%, rgba(168,85,247,.20), transparent 35%),
+    radial-gradient(circle at 50% 100%, rgba(59,130,246,.18), transparent 35%),
+    linear-gradient(135deg, #020617, #0f172a, #111827);
 
   background-attachment: fixed;
 }
 
 /* =========================
-   PREMIUM GLASS SYSTEM
-========================= */
-
-.apple-glass {
-  background: rgba(255,255,255,0.06);
-
-  backdrop-filter: blur(30px);
-
-  border: 1px solid rgba(255,255,255,0.10);
-
-  border-radius: 30px;
-
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.40),
-    inset 0 1px 0 rgba(255,255,255,0.12);
-
-  transition: all .35s ease;
-}
-
-.apple-glass:hover {
-  transform: translateY(-4px);
-
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.55),
-    0 0 30px rgba(59,130,246,.12);
-}
-
-/* =========================
-   GLASS CARD
+   💎 ULTRA PREMIUM GLASS CARD
 ========================= */
 
 .glass-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 10px;
+  gap: 12px;
 
   padding: 20px;
+  border-radius: 28px;
 
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(35px);
+  -webkit-backdrop-filter: blur(35px);
 
-  background: rgba(255,255,255,.05);
-
-  border: 1px solid rgba(255,255,255,.08);
-
-  backdrop-filter: blur(24px);
-
-  transition: all .35s ease;
-}
-
-.glass-card:hover {
-  transform: translateY(-6px);
-
-  background: rgba(255,255,255,.09);
-
-  border-color: rgba(59,130,246,.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
   box-shadow:
-    0 10px 40px rgba(59,130,246,.18);
-}
-
-/* =========================
-   GLOW UTILITIES
-========================= */
-
-.glow-border {
-  position: relative;
-}
-
-.glow-border::before {
-  content: "";
-
-  position: absolute;
-  inset: -1px;
-
-  border-radius: inherit;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(59,130,246,.45),
-      rgba(168,85,247,.35)
-    );
-
-  filter: blur(18px);
-
-  z-index: -1;
-}
-
-.blue-glow {
-  position: absolute;
-
-  width: 500px;
-  height: 500px;
-
-  border-radius: 999px;
-
-  background: rgba(59,130,246,.12);
-
-  filter: blur(120px);
-
-  pointer-events: none;
-}
-
-.purple-glow {
-  position: absolute;
-
-  width: 500px;
-  height: 500px;
-
-  border-radius: 999px;
-
-  background: rgba(168,85,247,.12);
-
-  filter: blur(120px);
-
-  pointer-events: none;
-}
-
-/* =========================
-   ANIMATIONS
-========================= */
-
-@keyframes float {
-  0%,100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-12px);
-  }
-}
-
-@keyframes pulseGlow {
-  0%,100% {
-    opacity: .5;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes shimmer {
-  from {
-    background-position: -200% center;
-  }
-
-  to {
-    background-position: 200% center;
-  }
-}
-
-.animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulseGlow 3s ease-in-out infinite;
-}
-
-.fade-up {
-  animation: fadeUp .6s ease forwards;
-}
-
-.shimmer {
-  background-size: 200% auto;
-  animation: shimmer 4s linear infinite;
-}
-
-/* =========================
-   WEATHER EFFECTS
-========================= */
-
-.rain {
-  position: absolute;
-  inset: 0;
-
-  pointer-events: none;
-
-  background-image:
-    linear-gradient(
-      transparent,
-      rgba(255,255,255,.20)
-    );
-
-  background-size: 2px 18px;
-
-  opacity: .25;
-
-  animation: rain 0.45s linear infinite;
-}
-
-@keyframes rain {
-  from {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 20px;
-  }
-}
-
-.snow {
-  position: absolute;
-  inset: 0;
-
-  pointer-events: none;
-
-  background-image:
-    radial-gradient(
-      white 1px,
-      transparent 1px
-    );
-
-  background-size: 20px 20px;
-
-  opacity: .35;
-
-  animation: snow 12s linear infinite;
-}
-
-@keyframes snow {
-  from {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 220px;
-  }
-}
-
-/* =========================
-   CLOUD LIGHT
-========================= */
-
-.cloud-glow {
-  position: absolute;
-
-  width: 450px;
-  height: 450px;
-
-  border-radius: 999px;
-
-  background: rgba(255,255,255,.06);
-
-  filter: blur(90px);
-
-  animation: float 8s ease-in-out infinite;
-}
-
-/* =========================
-   SCROLLBAR
-========================= */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,.18);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,.35);
-}
-
-/* =========================
-   TEXT SELECTION
-========================= */
-
-::selection {
-  background: rgba(59,130,246,.45);
-  color: white;
-}
-
-/* =========================
-   NO SCROLLBAR
-========================= */
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-/* =========================
-   🔥 3D UI SYSTEM (ADVANCED)
-========================= */
-
-/* Perspective container */
-.perspective {
-  perspective: 1400px;
-}
-
-/* 3D card base */
-.card-3d {
-  transform-style: preserve-3d;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(59,130,246,0.12),
+    inset 0 1px 1px rgba(255,255,255,0.15),
+    inset 0 -2px 6px rgba(0,0,0,0.3);
+
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(.2,.8,.2,1);
   will-change: transform;
 }
 
-/* Hover lift */
-.card-3d:hover {
-  transform: rotateX(6deg) rotateY(-6deg) scale(1.04);
-}
-
-/* Inner depth layers */
-.layer {
-  transform: translateZ(40px);
-}
-
-.layer-deep {
-  transform: translateZ(80px);
-}
-
-.layer-bg {
-  transform: translateZ(-30px) scale(1.05);
-}
-
-/* =========================
-   💡 REAL LIGHT REFLECTION
-========================= */
-
-.light-reflection {
+/* Gradient border */
+.glass-card::before {
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-
-  background: linear-gradient(
-    120deg,
-    rgba(255,255,255,0.25) 0%,
-    rgba(255,255,255,0.05) 40%,
-    transparent 60%
-  );
-
-  opacity: 0;
-  transition: opacity 0.4s;
-}
-
-.card-3d:hover .light-reflection {
-  opacity: 1;
-}
-
-/* =========================
-   🌈 3D SHADOW SYSTEM
-========================= */
-
-.shadow-3d {
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.4),
-    0 30px 80px rgba(0,0,0,0.6),
-    0 0 40px rgba(59,130,246,0.15);
-}
-
-.shadow-3d-hover:hover {
-  box-shadow:
-    0 20px 50px rgba(0,0,0,0.5),
-    0 60px 120px rgba(0,0,0,0.7),
-    0 0 60px rgba(59,130,246,0.25);
-}
-
-/* =========================
-   🧊 GLASS DEPTH ENHANCEMENT
-========================= */
-
-.glass-3d {
-  background: rgba(255,255,255,0.07);
-
-  backdrop-filter: blur(40px);
-
-  border: 1px solid rgba(255,255,255,0.15);
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.25),
-    inset 0 -2px 6px rgba(0,0,0,0.3),
-    0 20px 60px rgba(0,0,0,0.5);
-}
-
-/* =========================
-   🧠 SMART HOVER PHYSICS
-========================= */
-
-.physics {
-  transition: transform 0.25s cubic-bezier(.2,.8,.2,1);
-}
-
-.physics:hover {
-  transform: translateY(-8px) scale(1.03);
-}
-
-/* =========================
-   🌌 DEPTH BACKGROUND LAYERS
-========================= */
-
-.depth-bg {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-}
-
-.depth-bg::before {
-  content: "";
-
-  position: absolute;
-  width: 600px;
-  height: 600px;
-
-  background: radial-gradient(
-    circle,
-    rgba(59,130,246,0.15),
-    transparent
-  );
-
-  filter: blur(140px);
-
-  top: -100px;
-  left: -100px;
-}
-
-.depth-bg::after {
-  content: "";
-
-  position: absolute;
-  width: 500px;
-  height: 500px;
-
-  background: radial-gradient(
-    circle,
-    rgba(168,85,247,0.15),
-    transparent
-  );
-
-  filter: blur(120px);
-
-  bottom: -120px;
-  right: -120px;
-}
-
-/* =========================
-   ☁️ FLOATING UI ELEMENTS
-========================= */
-
-.float-slow {
-  animation: float 10s ease-in-out infinite;
-}
-
-.float-fast {
-  animation: float 4s ease-in-out infinite;
-}
-
-/* =========================
-   🧿 NEON EDGE EFFECT
-========================= */
-
-.neon-edge {
-  position: relative;
-}
-
-.neon-edge::after {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  border-radius: inherit;
-
   padding: 1px;
 
   background: linear-gradient(
-    135deg,
-    rgba(59,130,246,0.6),
-    rgba(168,85,247,0.6)
+    120deg,
+    rgba(34,211,238,0.6),
+    rgba(59,130,246,0.5),
+    rgba(147,51,234,0.5)
   );
 
   -webkit-mask:
@@ -558,68 +91,45 @@ body {
     linear-gradient(#000 0 0);
 
   -webkit-mask-composite: xor;
-
   mask-composite: exclude;
+
+  opacity: 0.7;
+  pointer-events: none;
 }
 
-/* =========================
-   🎯 MOUSE TILT (JS HOOK READY)
-========================= */
+/* Light reflection */
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
 
-.tilt {
-  transform-style: preserve-3d;
-  transition: transform 0.2s ease;
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(255,255,255,0.25),
+    transparent 60%
+  );
+
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-/* =========================
-   🔥 PREMIUM BUTTON 3D
-========================= */
-
-.btn-3d {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-
-  box-shadow:
-    0 10px 20px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.3);
-
-  transition: all 0.25s ease;
-}
-
-.btn-3d:hover {
-  transform: translateY(-3px) scale(1.05);
-
-  box-shadow:
-    0 20px 40px rgba(0,0,0,0.5),
-    0 0 25px rgba(59,130,246,0.4);
-}
-/* =========================
-   🌌 BASE GLASS UI
-========================= */
-
-.glass-card {
-  position: relative;
-  padding: 16px;
-  border-radius: 20px;
-
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255, 255, 255, 0.1);
-
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  transition: all 0.25s ease;
-}
-
+/* Hover */
 .glass-card:hover {
-  transform: translateY(-3px) scale(1.02);
-  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-10px) scale(1.02);
+
+  box-shadow:
+    0 40px 100px rgba(0, 0, 0, 0.7),
+    0 0 60px rgba(59,130,246,0.25),
+    0 0 80px rgba(168,85,247,0.2);
+}
+
+.glass-card:hover::after {
+  opacity: 1;
 }
 
 /* =========================
-   🧠 3D TILT SYSTEM
+   🧠 TILT SYSTEM
 ========================= */
 
 .tilt {
@@ -629,36 +139,12 @@ body {
   position: relative;
 }
 
-/* Child depth effect */
 .tilt > * {
   transform: translateZ(30px);
 }
 
 /* =========================
-   ✨ LIGHT REFLECTION (MAGIC)
-========================= */
-
-.light-reflection {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-
-  background: radial-gradient(
-    circle at var(--x, 50%) var(--y, 50%),
-    rgba(255, 255, 255, 0.25),
-    transparent 60%
-  );
-
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.tilt:hover .light-reflection {
-  opacity: 1;
-}
-
-/* =========================
-   🌈 GRADIENT GLOW BORDER
+   ✨ GLOW UTILITIES
 ========================= */
 
 .glow-border {
@@ -669,47 +155,83 @@ body {
   content: "";
   position: absolute;
   inset: -1px;
-
   border-radius: inherit;
 
   background: linear-gradient(
-    120deg,
-    #22d3ee,
-    #3b82f6,
-    #9333ea
+    135deg,
+    rgba(59,130,246,.45),
+    rgba(168,85,247,.35)
   );
 
-  opacity: 0.3;
-  filter: blur(12px);
-
+  filter: blur(18px);
   z-index: -1;
 }
 
 /* =========================
-   ⚡ SMOOTH SCROLL + UI
+   🌌 BACKGROUND GLOWS
 ========================= */
 
-html {
-  scroll-behavior: smooth;
+.blue-glow,
+.purple-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 999px;
+  filter: blur(120px);
+  pointer-events: none;
+}
+
+.blue-glow {
+  background: rgba(59,130,246,.12);
+}
+
+.purple-glow {
+  background: rgba(168,85,247,.12);
 }
 
 /* =========================
-   🎯 PERFORMANCE BOOST
+   🎬 ANIMATIONS
 ========================= */
 
-* {
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
 }
 
 /* =========================
-   💎 OPTIONAL PREMIUM TOUCH
+   🌧 WEATHER EFFECTS
 ========================= */
 
-.card-hover {
-  transition: all 0.3s ease;
+.rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background-image: linear-gradient(transparent, rgba(255,255,255,.20));
+  background-size: 2px 18px;
+  opacity: .25;
+
+  animation: rain 0.45s linear infinite;
 }
 
-.card-hover:hover {
-  transform: scale(1.03) translateY(-4px);
+@keyframes rain {
+  from { background-position: 0 0; }
+  to { background-position: 0 20px; }
+}
+
+/* =========================
+   🧊 SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
 }
