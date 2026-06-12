@@ -12,7 +12,7 @@ import {
 
 import type { Weather, Forecast } from '@/lib/types';
 import { useTilt } from '@/hooks/useTilt';
-import { predictRainProbability } from '@/lib/aiPredictor';
+import { predictRainProbability } from '../lib/aiPredictor';
 
 interface SidePanelProps {
   weather: Weather;
