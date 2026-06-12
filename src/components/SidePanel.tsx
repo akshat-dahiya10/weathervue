@@ -11,49 +11,47 @@ import {
 } from 'lucide-react';
 
 import type { Weather, Forecast } from '@/lib/types';
+import { useTilt } from '@/hooks/useTilt';
+import { predictRainProbability } from '@/lib/aiPredictor';
 
 interface SidePanelProps {
   weather: Weather;
-  forecast?: Forecast; // ✅ FIX (optional for safety)
+  forecast?: Forecast; // ✅ FIXED (optional)
 }
 
 export default function SidePanel({
   weather,
   forecast
 }: SidePanelProps) {
-
-  // ✅ SAFE GUARDS (avoid crash)
-  if (!weather) return null;
+  const tilt = useTilt();
 
   const sunrise = new Date(
-    weather.sys?.sunrise * 1000
+    weather.sys.sunrise * 1000
   ).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   });
 
   const sunset = new Date(
-    weather.sys?.sunset * 1000
+    weather.sys.sunset * 1000
   ).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   });
 
-  const humidityScore =
-    weather.main?.humidity > 70 ? 90 : 65;
-
-  // ✅ OPTIONAL forecast usage
-  const nextHour = forecast?.list?.[0];
-  const rainChance = nextHour?.pop
-    ? Math.round(nextHour.pop * 100)
-    : null;
+  // ✅ REAL AI
+  const ai = predictRainProbability(weather, forecast);
 
   return (
     <motion.div
+      ref={tilt.ref}
+      onMouseMove={tilt.onMouseMove}
+      onMouseLeave={tilt.onMouseLeave}
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6 }}
       className="
+      tilt
       bg-white/[0.06]
       backdrop-blur-3xl
       rounded-[30px]
@@ -64,6 +62,8 @@ export default function SidePanel({
       space-y-8
       "
     >
+      {/* Light reflection */}
+      <div className="light-reflection pointer-events-none absolute inset-0 rounded-[30px]" />
 
       {/* Header */}
       <div>
@@ -93,33 +93,30 @@ export default function SidePanel({
         <div className="flex items-center gap-3 mb-4">
           <Brain className="w-5 h-5" />
           <span className="font-semibold">
-            AI Weather Prediction
+            AI Rain Prediction
           </span>
         </div>
 
         <p className="text-sm text-slate-300 mb-4">
-          {rainChance
-            ? `Rain probability in next hour is ${rainChance}%`
-            : `Weather conditions are expected to remain stable over the next few hours.`}
+          {ai.label}
         </p>
 
         <div className="h-3 rounded-full bg-white/10 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
             style={{
-              width: `${rainChance ?? humidityScore}%`
+              width: `${ai.probability}%`
             }}
           />
         </div>
 
         <p className="mt-3 text-xs text-slate-400">
-          Confidence: {rainChance ?? humidityScore}%
+          Confidence: {ai.probability}%
         </p>
       </motion.div>
 
       {/* Weather Metrics */}
       <div className="grid grid-cols-2 gap-4">
-
         <div className="glass-card">
           <Sun className="w-6 h-6" />
           <span className="text-sm text-slate-400">
@@ -156,10 +153,9 @@ export default function SidePanel({
             Wind Speed
           </span>
           <p className="font-bold">
-            {weather.wind?.speed ?? 0} m/s
+            {weather.wind.speed} m/s
           </p>
         </div>
-
       </div>
 
       {/* UV Card */}
@@ -206,12 +202,10 @@ export default function SidePanel({
 
         <p className="text-slate-400 text-sm leading-6">
           Current temperature is{' '}
-          {Math.round(weather.main?.temp)}°
-          with{' '}
-          {weather.weather?.[0]?.description}.
-          Visibility remains good at{' '}
-          {(weather.visibility / 1000).toFixed(1)} km
-          and wind conditions are moderate.
+          {Math.round(weather.main.temp)}° with{' '}
+          {weather.weather[0].description}. Visibility is{' '}
+          {(weather.visibility / 1000).toFixed(1)} km and
+          wind conditions are moderate.
         </p>
       </div>
     </motion.div>
