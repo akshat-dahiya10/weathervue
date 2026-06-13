@@ -12,8 +12,14 @@ import {
   Sunset
 } from 'lucide-react';
 import type { Weather } from '@/lib/types';
+import { getAIInsight, getOutfitSuggestion } from "@/lib/aiWeather";
 
 export default function WeatherCard({ weather }: { weather: Weather }) {
+
+  // ✅ ADD KIYA (logic)
+  const insight = getAIInsight(weather);
+  const outfit = getOutfitSuggestion(weather);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -170,6 +176,16 @@ export default function WeatherCard({ weather }: { weather: Weather }) {
           </motion.div>
 
         </div>
+
+        {/* ✅ ADD KIYA (AI SECTION) */}
+        <div className="glass-card mt-10 p-5">
+          <h3 className="text-lg font-semibold">🧠 AI Insight</h3>
+          <p className="text-white/80 mt-2">{insight}</p>
+
+          <h3 className="text-lg font-semibold mt-4">👕 Outfit Suggestion</h3>
+          <p className="text-white/80 mt-2">{outfit}</p>
+        </div>
+
       </div>
     </motion.div>
   );
