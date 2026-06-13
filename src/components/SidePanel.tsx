@@ -14,7 +14,6 @@ import type { Weather, Forecast } from '@/lib/types';
 import { useTilt } from '@/hooks/useTilt';
 import { predictRainProbability } from '@/lib/aiPredictor';
 import { generateWeatherSummary } from '../lib/aiSummary';
-import MapView from "@/components/MapView";
 
 interface SidePanelProps {
   weather: Weather;
@@ -249,9 +248,6 @@ export default function SidePanel({
   {(weather.visibility / 1000).toFixed(1)} km and
   wind conditions are moderate.
 </p>
-
-{/* ✅ MAP YAHA ADD KARNA HAI */}
-<MapView lat={weather.coord.lat} lon={weather.coord.lon} />
 
 </div>
 </motion.div>
