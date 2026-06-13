@@ -1,24 +1,29 @@
-'use client';
+"use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-export default function MapView({ lat, lon }: { lat: number; lon: number }) {
+type MapViewProps = {
+  lat: number;
+  lon: number;
+};
+
+export default function MapView({ lat, lon }: MapViewProps) {
   return (
     <div className="mt-10 rounded-2xl overflow-hidden border border-white/10">
       <MapContainer
-        center={[lat, lon]}
+        center={[lat, lon] as [number, number]}   // ✅ FIX
         zoom={10}
         scrollWheelZoom={false}
-        style={{ height: '400px', width: '100%' }}
+        style={{ height: "400px", width: "100%" }}
       >
         <TileLayer
+          attribution='© OpenStreetMap'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[lat, lon]}>
-          <Popup>
-            📍 Current Location
-          </Popup>
+
+        <Marker position={[lat, lon] as [number, number]}>
+          <Popup>Location</Popup>
         </Marker>
       </MapContainer>
     </div>
