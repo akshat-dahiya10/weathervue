@@ -13,8 +13,8 @@ import WelcomeScreen from '@/components/WelcomeScreen';
 import type { Forecast, RecentSearch, StoredSearchLocation, Weather } from '@/lib/types';
 import Particles from "@/components/Particles";
 
-// ✅ NEW IMPORT (ADD ONLY)
-import CompareCities from "@/components/CompareCities";
+/* 🔥 ADD THIS IMPORT */
+import CompareCities from '@/components/CompareCities';
 
 const RECENT_SEARCHES_KEY = 'weather-vue-recent-searches';
 const LAST_SEARCH_KEY = 'weather-vue-last-search';
@@ -217,11 +217,17 @@ export default function Home() {
             <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
               <div className="lg:col-span-2 space-y-6">
+
+                {/* 🔥 EXISTING */}
                 <WeatherCard weather={weather} />
 
-                {/* 🔥 NEW FEATURE ADDED (NO DELETE) */}
-                <CompareCities baseCity={weather.name} />
+                {/* 🔥 NEW FEATURE ADDED */}
+                <CompareCities 
+                  baseCity={weather.name} 
+                  baseTemp={weather.main.temp} 
+                />
 
+                {/* 🔥 EXISTING */}
                 <ForecastSection forecast={forecast} />
 
                 <RecentSearches
