@@ -12,6 +12,8 @@ import ErrorMessage from '@/components/ErrorMessage';
 import WelcomeScreen from '@/components/WelcomeScreen';
 import type { Forecast, RecentSearch, StoredSearchLocation, Weather } from '@/lib/types';
 import Particles from "@/components/Particles";
+
+/* 🔥 ADD THIS IMPORT */
 import CompareCities from '@/components/CompareCities';
 
 const RECENT_SEARCHES_KEY = 'weather-vue-recent-searches';
@@ -78,55 +80,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const requestIdRef = useRef(0);
-
-  /* 🔥 NEW STATES */
-  const [dark, setDark] = useState(true);
-  const [time, setTime] = useState(new Date());
-
-  /* 🔥 THEME SAVE */
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) setDark(saved === "dark");
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("theme", dark ? "dark" : "light");
-  }, [dark]);
-
-  /* 🔥 LIVE TIME */
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  /* 🔥 DYNAMIC BG */
-  const getBackground = () => {
-    if (!weather) return dark ? "bg-slate-900" : "bg-gray-100";
-
-    const condition = weather.weather[0].main.toLowerCase();
-
-    if (condition.includes("rain"))
-      return "bg-gradient-to-br from-gray-800 via-blue-900 to-black";
-    if (condition.includes("cloud"))
-      return "bg-gradient-to-br from-gray-600 to-gray-900";
-    if (condition.includes("clear"))
-      return "bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500";
-
-    return dark ? "bg-slate-900" : "bg-gray-100";
-  };
-
-  /* 🔥 SMART SUGGESTION */
-  const getSuggestion = () => {
-    if (!weather) return "";
-
-    const temp = weather.main.temp;
-
-    if (temp > 35) return "🔥 Stay hydrated bro!";
-    if (temp < 15) return "🧥 Wear a jacket!";
-    return "😎 Perfect weather!";
-  };
 
   const persistLastSearch = useCallback((search: StoredSearchLocation) => {
     try {
@@ -246,73 +199,58 @@ export default function Home() {
     fetchWeatherData({ city, lat, lon });
   };
 
-  return (
-    <div className={`${getBackground()} min-h-screen transition-all duration-500`}>
+ return (
+  <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
 
-      <Particles />
+    <Particles />
 
-      {/* 🔥 TOGGLE */}
-      <button
-        onClick={() => setDark(!dark)}
-        className="fixed top-5 right-5 z-50 px-4 py-2 rounded-xl backdrop-blur-lg bg-white/10 border border-white/20 shadow-lg"
-      >
-        {dark ? "🌙" : "☀️"}
-      </button>
+    <div className="relative z-10">
+      <Navbar onSearch={handleSearch} isLoading={isLoading} />
 
-      <div className="relative z-10">
-        <Navbar onSearch={handleSearch} isLoading={isLoading} />
+      <main className="pt-24 px-4 max-w-7xl mx-auto">
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorMessage message={error} />
+          ) : weather && forecast ? (
+            <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <main className="pt-24 px-4 max-w-7xl mx-auto">
+              <div className="lg:col-span-2 space-y-6">
 
-          {/* 🔥 TIME */}
-          <p className="text-center mb-4 text-sm opacity-80">
-            {time.toLocaleTimeString()} | {time.toDateString()}
-          </p>
+                {/* 🔥 EXISTING */}
+                <WeatherCard weather={weather} />
 
-          <AnimatePresence mode="wait">
-            {isLoading ? (
-              <LoadingSkeleton />
-            ) : error ? (
-              <ErrorMessage message={error} />
-            ) : weather && forecast ? (
-              <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* 🔥 NEW FEATURE ADDED */}
+                <CompareCities 
+                  baseCity={weather.name} 
+                  baseTemp={weather.main.temp} 
+                />
 
-                <div className="lg:col-span-2 space-y-6">
+                {/* 🔥 EXISTING */}
+                <ForecastSection forecast={forecast} />
 
-                  <WeatherCard weather={weather} />
+                <RecentSearches
+                  searches={recentSearches}
+                  onSelect={(search) =>
+                    handleSearch(search.city, search.lat, search.lon)
+                  }
+                  onClear={handleClearRecentSearches}
+                />
+              </div>
 
-                  <CompareCities 
-                    baseCity={weather.name} 
-                    baseTemp={weather.main.temp} 
-                  />
+              <div>
+                <SidePanel weather={weather} forecast={forecast} />
+              </div>
 
-                  {/* 🔥 SUGGESTION */}
-                  <p className="text-center text-blue-300 text-lg">
-                    {getSuggestion()}
-                  </p>
-
-                  <ForecastSection forecast={forecast} />
-
-                  <RecentSearches
-                    searches={recentSearches}
-                    onSelect={(search) =>
-                      handleSearch(search.city, search.lat, search.lon)
-                    }
-                    onClear={handleClearRecentSearches}
-                  />
-                </div>
-
-                <div>
-                  <SidePanel weather={weather} forecast={forecast} />
-                </div>
-
-              </motion.div>
-            ) : (
-              <WelcomeScreen />
-            )}
-          </AnimatePresence>
-        </main>
-      </div>
+            </motion.div>
+          ) : (
+            <WelcomeScreen />
+          )}
+        </AnimatePresence>
+      </main>
     </div>
-  );
+
+  </div>
+);
 }
