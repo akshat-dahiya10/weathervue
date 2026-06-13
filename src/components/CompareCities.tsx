@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -21,13 +20,20 @@ export default function CompareCities({ baseCity }: Props) {
     try {
       setLoading(true);
 
-      const res = await axios.get(
+      const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${compareCity}&appid=${API_KEY}&units=metric`
       );
 
-      setData(res.data);
+      const result = await res.json();
+
+      if (result.cod !== 200) {
+        alert("City not found ❌");
+        return;
+      }
+
+      setData(result);
     } catch (err) {
-      alert("City not found ❌");
+      alert("Error fetching data ⚠️");
     } finally {
       setLoading(false);
     }
@@ -66,14 +72,6 @@ export default function CompareCities({ baseCity }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="bg-white/10 p-4 rounded-xl">
-            <p className="text-sm text-gray-300">{baseCity}</p>
-            <p className="text-2xl font-bold">
-              {/* base city temp handled outside */}
-              ---
-            </p>
-          </div>
-
           <div className="bg-white/10 p-4 rounded-xl">
             <p className="text-sm text-gray-300">{data.name}</p>
             <p className="text-2xl font-bold">
