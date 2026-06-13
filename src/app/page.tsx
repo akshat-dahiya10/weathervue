@@ -10,6 +10,7 @@ import ForecastSection from '@/components/ForecastSection';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import ErrorMessage from '@/components/ErrorMessage';
 import WelcomeScreen from '@/components/WelcomeScreen';
+import CompareWeather from '@/components/CompareWeather'; // ✅ ADDED
 import type { Forecast, RecentSearch, StoredSearchLocation, Weather } from '@/lib/types';
 import Particles from "@/components/Particles";
 
@@ -73,6 +74,7 @@ function parseLastSearch(raw: string | null): StoredSearchLocation | null {
 export default function Home() {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [forecast, setForecast] = useState<Forecast | null>(null);
+  const [compareCity, setCompareCity] = useState<Weather | null>(null); // ✅ ADDED
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
@@ -114,7 +116,6 @@ export default function Home() {
     });
   }, []);
 
-  // ✅ FIX: CLEAR FUNCTION ADDED
   const handleClearRecentSearches = useCallback(() => {
     setRecentSearches([]);
     try {
@@ -163,6 +164,19 @@ export default function Home() {
     [saveToRecentSearches, persistLastSearch]
   );
 
+  // ✅ COMPARE FUNCTION
+  const handleCompare = async (city: string) => {
+    try {
+      const res = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+      const data = await res.json();
+      if (data.success) {
+        setCompareCity(data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     setRecentSearches(
       parseRecentSearches(localStorage.getItem(RECENT_SEARCHES_KEY))
@@ -197,50 +211,66 @@ export default function Home() {
     fetchWeatherData({ city, lat, lon });
   };
 
- return (
-  <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
+  return (
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/50 to-gray-900">
 
-    {/* 🔥 Background */}
-    <Particles />
+      <Particles />
 
-    {/* 🔥 Foreground UI */}
-    <div className="relative z-10">
-      <Navbar onSearch={handleSearch} isLoading={isLoading} />
+      <div className="relative z-10">
+        <Navbar onSearch={handleSearch} isLoading={isLoading} />
 
-      <main className="pt-24 px-4 max-w-7xl mx-auto">
-        <AnimatePresence mode="wait">
-          {isLoading ? (
-            <LoadingSkeleton />
-          ) : error ? (
-            <ErrorMessage message={error} />
-          ) : weather && forecast ? (
-            <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ✅ COMPARE INPUT */}
+        <div className="mt-6 flex justify-center">
+          <input
+            type="text"
+            placeholder="Compare city..."
+            className="px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white w-80"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleCompare(e.currentTarget.value);
+                e.currentTarget.value = "";
+              }
+            }}
+          />
+        </div>
 
-              <div className="lg:col-span-2 space-y-6">
-                <WeatherCard weather={weather} />
-                <ForecastSection forecast={forecast} />
+        <main className="pt-10 px-4 max-w-7xl mx-auto">
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : error ? (
+              <ErrorMessage message={error} />
+            ) : weather && forecast ? (
+              <motion.div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <RecentSearches
-                  searches={recentSearches}
-                  onSelect={(search) =>
-                    handleSearch(search.city, search.lat, search.lon)
-                  }
-                  onClear={handleClearRecentSearches}
-                />
-              </div>
+                <div className="lg:col-span-2 space-y-6">
+                  <WeatherCard weather={weather} />
 
-              <div>
-                <SidePanel weather={weather} forecast={forecast} />
-              </div>
+                  {/* ✅ COMPARE RESULT */}
+                  <CompareWeather city1={weather} city2={compareCity} />
 
-            </motion.div>
-          ) : (
-            <WelcomeScreen />
-          )}
-        </AnimatePresence>
-      </main>
+                  <ForecastSection forecast={forecast} />
+
+                  <RecentSearches
+                    searches={recentSearches}
+                    onSelect={(search) =>
+                      handleSearch(search.city, search.lat, search.lon)
+                    }
+                    onClear={handleClearRecentSearches}
+                  />
+                </div>
+
+                <div>
+                  <SidePanel weather={weather} forecast={forecast} />
+                </div>
+
+              </motion.div>
+            ) : (
+              <WelcomeScreen />
+            )}
+          </AnimatePresence>
+        </main>
+      </div>
     </div>
-
-  </div>
-);
+  );
 }
