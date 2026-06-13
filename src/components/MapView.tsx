@@ -9,20 +9,22 @@ type MapViewProps = {
 };
 
 export default function MapView({ lat, lon }: MapViewProps) {
+  const position: [number, number] = [lat, lon];
+
   return (
     <div className="mt-10 rounded-2xl overflow-hidden border border-white/10">
       <MapContainer
-  center={[lat, lon] as [number, number]}
-  zoom={10}
-  scrollWheelZoom={false}
-  style={{ height: "400px", width: "100%" }}
->
+        center={position as any}
+        zoom={10}
+        scrollWheelZoom={false}
+        style={{ height: "400px", width: "100%" }}
+      >
         <TileLayer
-          attribution='© OpenStreetMap'
+          attribution="© OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <Marker position={[lat, lon] as [number, number]}>
+        <Marker position={position as any}>
           <Popup>Location</Popup>
         </Marker>
       </MapContainer>
